@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata: {name: dev-sa, namespace: travelo}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata: {name: travelo-reader, namespace: travelo}
+rules:
+- apiGroups: [""]
+  resources: [pods, pods/log, services, configmaps, events]
+  verbs: [get, list, watch]
+- apiGroups: [apps]
+  resources: [deployments, statefulsets, replicasets]
+  verbs: [get, list, watch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata: {name: travelo-reader-binding, namespace: travelo}
+subjects:
+- {kind: ServiceAccount, name: dev-sa, namespace: travelo}
+roleRef:
+  kind: Role
+  name: travelo-reader
+  apiGroup: rbac.authorization.k8s.io
